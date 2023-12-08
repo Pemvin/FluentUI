@@ -81,7 +81,7 @@ Rectangle{
     DragHandler {
         target: null
         grabPermissions: TapHandler.CanTakeOverFromHandlersOfSameType
-        onActiveChanged: if (active&&!d.isRestore) { d.win.startSystemMove(); }
+        onActiveChanged: if (active) d.isRestore?btn_maximize.clicked():d.win.startSystemMove()
     }
     Row{
         anchors{
