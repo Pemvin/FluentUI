@@ -80,8 +80,8 @@ Rectangle{
     }
     DragHandler {
         target: null
-        grabPermissions: TapHandler.CanTakeOverFromAnything
-        onActiveChanged: if (active) { d.win.startSystemMove(); }
+        grabPermissions: TapHandler.CanTakeOverFromHandlersOfSameType
+        onActiveChanged: if (active&&!d.isRestore) { d.win.startSystemMove(); }
     }
     Row{
         anchors{
