@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(FluentUI VERSION 0.1 LANGUAGES CXX)
+project(FluentUI VERSION 1.0)
 
 set(FLUENTUI_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 list(APPEND CMAKE_MODULE_PATH ${FLUENTUI_DIRECTORY}/.cmake/)
@@ -26,21 +26,15 @@ endif()
 
 add_subdirectory(src)
 
+#Release也支持日志打印代码位置
 target_compile_definitions(fluentuiplugin
     PRIVATE
     QT_MESSAGELOGCONTEXT
 )
 
-add_subdirectory(3rdparty/zxing-cpp)
-
 if (FLUENTUI_BUILD_EXAMPLES)
     add_subdirectory(example)
 endif ()
-
-set(FRAMELESSHELPER_BUILD_STATIC ON)
-set(FRAMELESSHELPER_NO_DEBUG_OUTPUT ON)
-set(FRAMELESSHELPER_BUILD_WIDGETS OFF)
-add_subdirectory(3rdparty/framelesshelper)
 
 message("------------------------ FluentUI ------------------------")
 message("Build FluentUI demo applications.: ${FLUENTUI_BUILD_EXAMPLES}")

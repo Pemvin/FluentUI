@@ -16,14 +16,13 @@ FluWindow {
 
     id:window
     title: "FluentUI"
-    width: 1000
-    height: 640
+    width: 960
+    height: 600
     minimumWidth: 520
     minimumHeight: 200
     launchMode: FluWindowType.SingleTask
     fitsAppBarWindows: true
     appBar: FluAppBar {
-        width: window.width
         height: 30
         darkText: Lang.dark_mode
         showDark: true
@@ -45,7 +44,15 @@ FluWindow {
     }
 
     onFirstVisible: {
-        tour.open()
+        timer_tour_delay.restart()
+    }
+
+    Timer{
+        id:timer_tour_delay
+        interval: 200
+        onTriggered: {
+            tour.open()
+        }
     }
 
     Component.onCompleted: {
@@ -194,7 +201,12 @@ FluWindow {
                 pageMode: FluNavigationViewType.NoStack
                 items: ItemsOriginal
                 footerItems:ItemsFooter
-                topPadding:FluTools.isMacos() ? 20 : 0
+                topPadding:{
+                    if(window.useSystemAppBar){
+                        return 0
+                    }
+                    return FluTools.isMacos() ? 20 : 0
+                }
                 displayMode:viewmodel_settings.displayMode
                 logo: "qrc:/example/res/image/favicon.ico"
                 title:"FluentUI"
@@ -231,7 +243,7 @@ FluWindow {
         id:com_reveal
         CircularReveal{
             id:reveal
-            target:window.contentItem
+            target:window.layoutContainer()
             anchors.fill: parent
             onAnimationFinished:{
                 //动画结束后释放资源
@@ -260,7 +272,7 @@ FluWindow {
                 return
             }
             loader_reveal.sourceComponent = com_reveal
-            var target = window.contentItem
+            var target = window.layoutContainer()
             var pos = button.mapToItem(target,0,0)
             var mouseX = pos.x
             var mouseY = pos.y

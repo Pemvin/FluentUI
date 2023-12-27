@@ -25,6 +25,12 @@ Q_IMPORT_QML_PLUGIN(FluentUIPlugin)
 int main(int argc, char *argv[])
 {
     qputenv("QT_QUICK_CONTROLS_STYLE","Basic");
+#ifdef Q_OS_LINUX
+    //fix bug UOSv20 does not print logs
+    qputenv("QT_LOGGING_RULES","");
+    //fix bug UOSv20 v-sync does not work
+    qputenv("QSG_RENDER_LOOP","basic");
+#endif
     QGuiApplication::setOrganizationName("ZhuZiChu");
     QGuiApplication::setOrganizationDomain("https://zhuzichu520.github.io");
     QGuiApplication::setApplicationName("FluentUI");

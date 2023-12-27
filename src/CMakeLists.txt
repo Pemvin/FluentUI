@@ -1,21 +1,20 @@
 cmake_minimum_required(VERSION 3.20)
 
 if (FLUENTUI_BUILD_STATIC_LIB AND (QT_VERSION VERSION_GREATER_EQUAL "6.2"))
-    project(fluentui LANGUAGES CXX)
+    project(fluentui VERSION 1.0)
 else()
-    project(fluentuiplugin LANGUAGES CXX)
+    project(fluentuiplugin VERSION 1.0)
 endif()
 
 #配置通用编译
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-if(APPLE)
-    set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
-endif()
 
 if (FLUENTUI_BUILD_STATIC_LIB)
     add_definitions(-DFLUENTUI_BUILD_STATIC_LIB)
 endif()
 
+#导入Qt相关依赖包
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Qml)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Qml)
 
@@ -91,6 +90,7 @@ if(WIN32)
 endif()
 
 if(QT_VERSION VERSION_GREATER_EQUAL "6.2")
+    #如果是Qt6.2版本以上，则使用qt_add_library，qt_add_qml_module函数添加资源文件
     if(FLUENTUI_BUILD_STATIC_LIB)
         set(FLUENTUI_QML_PLUGIN_DIRECTORY ${CMAKE_BINARY_DIR}/FluentUI)
     endif()
@@ -108,6 +108,7 @@ if(QT_VERSION VERSION_GREATER_EQUAL "6.2")
         RESOURCE_PREFIX "/qt/qml"
     )
 else()
+    #如果是Qt6.2版本以下，则使用add_qmlplugin函数添加资源文件，这是个自定义的函数，详情见.cmake/QmlPlugin.cmake
     include(QmlPlugin)
     add_qmlplugin(${PROJECT_NAME}
         URI "FluentUI"
@@ -120,11 +121,15 @@ else()
     )
 endif()
 
+target_compile_definitions(${PROJECT_NAME}
+    PRIVATE
+    #导入qrcode配置文件
+    HAVE_CONFIG_H
+)
 
 #去掉mingw生成的动态库libxxx前缀lib，不去掉前缀会导致 module "FluentUI" plugin "fluentuiplugin" not found
 if(MINGW)
     set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
-    set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX ".debug")
 endif()
 
 #MSVC Debug 添加后缀d，与Qt插件风格保持一致
@@ -137,9 +142,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     Qt${QT_VERSION_MAJOR}::CorePrivate
     Qt${QT_VERSION_MAJOR}::QuickPrivate
     Qt${QT_VERSION_MAJOR}::QmlPrivate
-    ZXing
-    FramelessHelper::Core
-    FramelessHelper::Quick
 )
 
 #安装
