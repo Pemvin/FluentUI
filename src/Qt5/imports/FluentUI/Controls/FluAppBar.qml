@@ -91,7 +91,7 @@ Rectangle{
         anchors.fill: parent
         onPositionChanged:
             (mouse)=>{
-                d.win.startSystemMove()
+                d.isRestore?btn_maximize.clicked():d.win.startSystemMove()
             }
         onDoubleClicked:
             (mouse)=>{
